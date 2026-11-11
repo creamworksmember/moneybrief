@@ -16,7 +16,11 @@ export type Node = Record<string, unknown>;
 export const abs = (u: string) => (u && u.startsWith("http") ? u : `${SITE_URL}${u || ""}`);
 
 export const ORG_ID = `${SITE_URL}/#organization`;
-export const PARENT_ORG_ID = `${SITE_URL}/#parent-organization`;
+// 법인(㈜바로크레디트대부) @id — 바로보다(baroboda.net)와 머니브리프가 "같은 값"을 공유해서 AI 가 한 회사로 합치게 한다.
+// 바로보다 clients/barocredit/site.py 의 CORP_ID 와 반드시 동일해야 해요. (SITE_URL 에 묶지 않음)
+export const PARENT_ORG_ID = "https://www.barocredit.com/#organization";
+// 같은 법인이 운영하는 형제 사이트 — 법인 노드의 subOrganization 으로 선언
+export const BAROBODA_ORG_ID = "https://baroboda.net/#org";
 export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const EDITORIAL_ID = `${SITE_URL}/#editorial-team`;
 export const REVIEWER_ID = `${SITE_URL}/#reviewer`;
@@ -38,6 +42,7 @@ export const SAME_AS: string[] = [
 
 export const PARENT_SAME_AS: string[] = [
   "https://www.barocredit.com",
+  "https://m.barocredit.com/",
   "https://www.youtube.com/@barobaroloan",
   "https://blog.naver.com/barobaroloan1899",
   // "https://www.instagram.com/____",
@@ -94,7 +99,7 @@ export function parentOrganizationNode(): Node {
     legalName: "주식회사 바로크레디트대부",
     url: "https://www.barocredit.com/",
     description:
-      "금융감독원에 등록된 대부업·대부중개업체이며, 금융교육 콘텐츠 브랜드 money brief를 운영합니다.",
+      "금융감독원에 등록된 대부업·대부중개업체이며, 대출 브랜드 '바로바로론'과 정보 사이트 baroboda(바로보다)·금융교육 콘텐츠 브랜드 money brief를 운영합니다.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "영등포로 150 (당산동1가, 생각공장)",
@@ -141,6 +146,7 @@ export function parentOrganizationNode(): Node {
       },
     },
     areaServed: { "@type": "Country", name: "대한민국" },
+    subOrganization: [{ "@id": ORG_ID }, { "@id": BAROBODA_ORG_ID }],
     sameAs: PARENT_SAME_AS,
   };
 }
