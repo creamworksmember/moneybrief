@@ -1,5 +1,5 @@
 // 사이트 공통 상수 + 사이트맵/llms.txt 가 함께 쓰는 글 목록 조회
-import { wpUrl, stripHtml, GUIDE_CATEGORIES } from "@/lib/wp";
+import { wpUrl, stripHtml, cleanSummary, GUIDE_CATEGORIES } from "@/lib/wp";
 import { mainTitle } from "@/lib/title";
 
 export const SITE_URL = (process.env.SITE_URL || "https://www.moneybrief.net").replace(/\/$/, "");
@@ -64,7 +64,7 @@ export async function getAllPosts(): Promise<SitePost[]> {
         slug: decodeURIComponent(p.slug),
         // llms.txt 목록에도 부제가 붙은 제목이 그대로 나가지 않게 첫 문장만 사용
         title: mainTitle(stripHtml(p.title?.rendered || "")),
-        excerpt: stripHtml(p.excerpt?.rendered || "").slice(0, 160),
+        excerpt: cleanSummary(p.excerpt?.rendered || "", 160),
         cat: (p.categories || []).map((id) => catName[id]).find((n) => GUIDE_CATEGORIES.includes(n)) || "",
         date: p.date,
         modified: p.modified || p.date,

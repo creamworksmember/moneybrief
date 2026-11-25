@@ -6,7 +6,8 @@ import ReadingProgress from "./ReadingProgress";
 import ArticleRail from "./ArticleRail";
 import Feedback from "./Feedback";
 import HelpfulCount from "./HelpfulCount";
-import { wpFetch, stripHtml, getMediaMap, catImage, GUIDE_CATEGORIES } from "@/lib/wp";
+import { wpFetch, stripHtml, stripEmoji, cleanSummary, getMediaMap, catImage, GUIDE_CATEGORIES } from "@/lib/wp";
+import { cleanBody } from "@/lib/body";
 import { getTagNames } from "@/lib/wp";
 import { guideUrl } from "@/lib/site";
 import { geoOverride } from "@/lib/geo-overrides";
@@ -51,10 +52,11 @@ async function getPost(slug: string): Promise<WpPost | null> {
 function processBody(html: string) {
   const toc: { id: string; text: string }[] = [];
   let i = 0;
-  const out = html.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, (_m, inner) => {
+  // 굵은 글씨 소제목 → h2/h3, 빈 앵커 제거 (lib/body.ts)
+  const out = cleanBody(html).replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, (_m, inner) => {
     i++;
     const id = `s${i}`;
-    toc.push({ id, text: stripHtml(inner) });
+    toc.push({ id, text: stripEmoji(stripHtml(inner)).trim() });
     const num = String(i).padStart(2, "0");
     return `<h2 id="${id}"><span style="color:var(--blue);font-size:0.8em;margin-right:12px;font-feature-settings:'tnum' 1">${num}</span>${inner}</h2>`;
   });
@@ -82,7 +84,7 @@ export async function generateMetadata({
   const curated = geoOverride(post.id).description;
   const desc =
     curated ||
-    stripHtml(post.excerpt?.rendered || "").slice(0, 150) ||
+    cleanSummary(post.excerpt?.rendered || "", 150) ||
     "money brief — 신용·대출·금융사기를 쉬운 말로, 정확하게 검증해 드립니다.";
   const media = await getMediaMap([post.featured_media || 0]);
   const ogCats =
@@ -134,7 +136,8 @@ export default async function GuideDetail({
   // 제목에 부제가 이어 붙어 저장된 글이 있어 첫 문장까지만 제목으로 씁니다.
   const { title, subtitle: autoSubtitle } = splitTitle(stripHtml(post.title.rendered));
   const pageSubtitle = post.acf?.subtitle || autoSubtitle;
-  const summary = stripHtml(post.excerpt?.rendered || "");
+  // JSON-LD 설명문 — 이모지·"[…]" 를 걷어 낸 발췌 (meta description 과 같은 규칙)
+  const summary = cleanSummary(post.excerpt?.rendered || "", 300);
   const helpfulCount = Number(post.acf?.helpful_count) || 0;
 
   const rel =
