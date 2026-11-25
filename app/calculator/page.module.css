@@ -433,6 +433,12 @@
   margin-top: 2px;
 }
 
+.disclaimer a {
+  color: var(--blue);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 /* ============ responsive ============ */
 @media (max-width: 960px) {
   .layout {

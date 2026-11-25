@@ -1,0 +1,263 @@
+/* ============ /calculator — 계산기 설명 글 (CalcGuide.tsx) ============ */
+.guide {
+  background: #fff;
+  border-top: 1px solid var(--line);
+  padding: 56px 0 72px;
+}
+
+.wrap {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.asOf {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.caveat {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sub);
+  background: var(--base);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 12px 0 8px;
+}
+
+.section {
+  padding: 36px 0 4px;
+  border-bottom: 1px solid var(--line);
+  scroll-margin-top: 96px;
+}
+
+.section:last-of-type {
+  border-bottom: 0;
+}
+
+.section h2 {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  line-height: 1.4;
+  margin: 0 0 14px;
+}
+
+.section p,
+.section li {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--sub);
+}
+
+.section p {
+  margin: 0 0 16px;
+}
+
+.section ul {
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+
+.section li + li {
+  margin-top: 6px;
+}
+
+.lead {
+  color: var(--ink) !important;
+  font-weight: 600;
+}
+
+.formula {
+  background: var(--tint);
+  color: var(--blue-deep) !important;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 15px !important;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  margin: 0 0 16px;
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+}
+
+.tableWrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  min-width: 480px;
+}
+
+.tableWrap th,
+.tableWrap td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  color: var(--sub);
+  line-height: 1.5;
+  vertical-align: top;
+}
+
+.tableWrap thead th {
+  background: var(--base);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.tableWrap tbody th {
+  color: var(--ink);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tableWrap tbody tr:last-child th,
+.tableWrap tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.note {
+  background: var(--base);
+  border-radius: 12px;
+  padding: 16px 18px 4px;
+  margin: 0 0 16px;
+}
+
+.note strong {
+  display: block;
+  color: var(--ink);
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.note li {
+  font-size: 15px !important;
+}
+
+/* ---------- FAQ ---------- */
+.faq {
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  margin: 0 0 10px;
+  background: #fff;
+}
+
+.faq summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq summary::after {
+  content: "+";
+  margin-left: auto;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.faq[open] summary::after {
+  content: "−";
+}
+
+.faq p {
+  margin: 0;
+  padding: 0 18px 16px 50px;
+}
+
+.qBadge {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--tint);
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+/* ---------- sources ---------- */
+.sources {
+  margin-top: 36px;
+  padding: 20px 22px;
+  background: var(--base);
+  border-radius: 12px;
+}
+
+.sources h3 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+.sources ul {
+  margin: 0 0 12px;
+  padding-left: 18px;
+}
+
+.sources li {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--sub);
+}
+
+.sources a {
+  color: var(--sub);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.sources a:hover {
+  color: var(--blue);
+}
+
+.sources p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 680px) {
+  .guide {
+    padding: 40px 0 56px;
+  }
+  .title {
+    font-size: 22px;
+  }
+  .section h2 {
+    font-size: 19px;
+  }
+  .faq p {
+    padding-left: 18px;
+  }
+}
