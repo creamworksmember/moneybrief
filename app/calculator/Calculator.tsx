@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
+import { RATE_CAVEAT } from "./guide";
 
 /* ===== formatting + finance helpers ===== */
 const comma = (n: number) => n.toLocaleString("ko-KR");
@@ -14,6 +15,8 @@ const annuityPay = (P: number, i: number, n: number) =>
 const annuityTotalInt = (P: number, i: number, n: number) => annuityPay(P, i, n) * n - P;
 const principalTotalInt = (P: number, i: number, n: number) => (i * P * (n + 1)) / 2;
 const bulletTotalInt = (P: number, i: number, n: number) => P * i * n;
+/** 중도상환수수료 부과 가능 기간(개월) */
+const FEE_MAX_MONTHS = 36;
 
 const TABS = [
   { key: "loan", label: "원리금 계산기" },
@@ -126,7 +129,8 @@ export default function Calculator({ initialTab }: { initialTab: string }) {
   const [loan, setLoan] = useState({ amt: 3000, rate: 5, term: 36, method: "annuity" });
   const [intg, setIntg] = useState({ amt: 2000, rate: 6.5, term: 24 });
   const [dsr, setDsr] = useState({ income: 4000, exist: 300, newP: 5000, rate: 5, term: 5 });
-  const [pre, setPre] = useState({ amt: 2000, rate: 1.2, total: 36, elapsed: 12 });
+  // 수수료율 기본값 0.6% — 2026년 은행 주담대 공시 수수료율(약 0.55~0.95%) 범위. guide.ts 예시와 같아요.
+  const [pre, setPre] = useState({ amt: 2000, rate: 0.6, total: 36, elapsed: 12 });
 
   /* ---------- loan ---------- */
   const L = (() => {
@@ -180,8 +184,11 @@ export default function Calculator({ initialTab }: { initialTab: string }) {
   const Pp = (() => {
     const amt = manToWon(pre.amt);
     const elapsed = Math.min(pre.elapsed, pre.total);
-    const remain = Math.max(0, pre.total - elapsed);
-    const remainRatio = pre.total > 0 ? remain / pre.total : 0;
+    // 중도상환수수료는 대출일로부터 3년 이내에만 부과돼요(금융소비자보호법).
+    // 대출기간이 3년보다 길면 3년(36개월)을 기준으로 계산하고, 3년이 지나면 0원이에요. (글 449와 같은 기준)
+    const base = Math.min(pre.total, FEE_MAX_MONTHS);
+    const remain = Math.max(0, base - elapsed);
+    const remainRatio = base > 0 ? remain / base : 0;
     const fee = amt * (pre.rate / 100) * remainRatio;
     const eff = amt > 0 ? (fee / amt) * 100 : 0;
     return { amt, elapsed, remain, remainRatio, fee, eff };
@@ -366,10 +373,10 @@ export default function Calculator({ initialTab }: { initialTab: string }) {
               <ResultCard
                 metrics={[
                   { k: "예상 중도상환수수료", value: won(Pp.fee), unit: "원", color: C_BLUE },
-                  { k: "잔존 기간", value: String(Pp.remain), unit: "개월", color: C_DARK },
+                  { k: "수수료 남은 기간", value: String(Pp.remain), unit: "개월", color: C_DARK },
                   { k: "실효 부담률", value: Pp.eff.toFixed(2), unit: "%", color: C_CORAL },
                 ]}
-                note="수수료 = 원금 × 수수료율 × (잔존기간 ÷ 약정기간). 다수 상품은 3년 경과 시 면제돼요."
+                note="수수료 = 갚는 금액 × 수수료율 × (남은 기간 ÷ 대출기간). 대출기간이 3년보다 길면 3년 기준으로 계산하고, 3년이 지나면 0원이에요."
               />
             )}
 
@@ -378,7 +385,10 @@ export default function Calculator({ initialTab }: { initialTab: string }) {
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 8h.01M11 12h1v4h1" />
               </svg>
-              <span>본 계산기는 단순 추정치로, 실제 금융회사의 상환표·우대금리·수수료와 다를 수 있어요. 참고용으로만 활용하세요.</span>
+              <span>
+                본 계산기는 단순 추정치로, 실제 금융회사의 상환표·우대금리·수수료와 다를 수 있어요. {RATE_CAVEAT} 참고용으로만 활용하세요.{" "}
+                <a href={`#guide-${tab}`}>계산 방법 자세히 보기</a>
+              </span>
             </p>
           </div>
         </div>
